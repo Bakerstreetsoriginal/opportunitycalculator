@@ -207,46 +207,6 @@ export function OpportuniteitskostCalculator() {
         </div>
       </section>
 
-      {/* Comparison */}
-      <section className={styles.comparisonSection}>
-        <h2 className={styles.sectionTitle}>
-          <span className={styles.sectionIcon}>⚖️</span>
-          Vergelijking: Klassiek vs. Bullet
-        </h2>
-        <div className={styles.comparisonExplanation}>
-          <p>
-            <strong>Wat betekent het verschil?</strong> Het verschil toont hoeveel meer (of minder) 
-            je overhoudt bij een bulletkrediet ten opzichte van een klassiek krediet, na aftrek van 
-            alle rentekosten. Een positief verschil betekent dat het bulletkrediet voordeliger is.
-          </p>
-        </div>
-        <div className={styles.comparisonTable}>
-          <div className={styles.comparisonHeader}>
-            <span>Rendement</span>
-            <span>Klassiek Netto</span>
-            <span>Bullet Netto</span>
-            <span>Voordeel Bullet</span>
-          </div>
-          {results.regularLoan.scenarios.map((regularScenario, i) => {
-            const bulletScenario = results.bulletLoan.scenarios[i];
-            const difference = bulletScenario.netto - regularScenario.netto;
-            return (
-              <div key={regularScenario.label} className={styles.comparisonRow}>
-                <span className={styles.comparisonLabel}>{regularScenario.label}</span>
-                <span className={regularScenario.netto >= 0 ? styles.positive : styles.negative}>
-                  {formatCurrency(regularScenario.netto)}
-                </span>
-                <span className={bulletScenario.netto >= 0 ? styles.positive : styles.negative}>
-                  {formatCurrency(bulletScenario.netto)}
-                </span>
-                <span className={`${styles.difference} ${difference >= 0 ? styles.positive : styles.negative}`}>
-                  {difference >= 0 ? '+' : ''}{formatCurrency(difference)}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </section>
     </div>
   );
 }

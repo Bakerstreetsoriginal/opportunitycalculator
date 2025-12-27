@@ -26,3 +26,4 @@ networks:
   traefik-net:
     external: true
 
+

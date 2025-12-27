@@ -49,8 +49,8 @@ export function OpportuniteitskostCalculator() {
             value={inputs.kredietbedrag}
             onChange={(v) => updateInput('kredietbedrag', v)}
             type="currency"
-            min={10000}
-            max={2000000}
+            min={1}
+            max={10000000000}
             hint="Het bedrag dat je wil lenen"
           />
           <InputField

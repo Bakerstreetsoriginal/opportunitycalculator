@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { InputField } from './InputField';
 import { ResultCard } from './ResultCard';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 import {
   calculateFIRE,
   formatCurrency,
@@ -9,13 +10,15 @@ import {
 } from '../utils/calculations';
 import styles from './Calculator.module.css';
 
+const DEFAULT_INPUTS: FIREInputs = {
+  startkapitaal: 10000,
+  jaarlijksRendement: 0.07,
+  beleggingshorizon: 20,
+  maandelijkseBijdrage: 500,
+};
+
 export function FIRECalculator() {
-  const [inputs, setInputs] = useState<FIREInputs>({
-    startkapitaal: 10000,
-    jaarlijksRendement: 0.07,
-    beleggingshorizon: 20,
-    maandelijkseBijdrage: 500,
-  });
+  const [inputs, setInputs] = useLocalStorage<FIREInputs>('fire-inputs', DEFAULT_INPUTS);
 
   const results = useMemo(() => calculateFIRE(inputs), [inputs]);
 
@@ -206,4 +209,3 @@ export function FIRECalculator() {
     </div>
   );
 }
-

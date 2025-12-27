@@ -1,16 +1,25 @@
 import { useState } from 'react';
 import { OpportuniteitskostCalculator } from './components/OpportuniteitskostCalculator';
 import { FIRECalculator } from './components/FIRECalculator';
+import { useTheme } from './hooks/useTheme';
 import styles from './App.module.css';
 
 type Tab = 'opportuniteitskost' | 'fire';
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('opportuniteitskost');
+  const [theme, toggleTheme] = useTheme();
 
   return (
     <div className={styles.app}>
       <header className={styles.header}>
+        <button 
+          className={styles.themeToggle} 
+          onClick={toggleTheme}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
         <div className={styles.headerContent}>
           <h1 className={styles.title}>
             <span className={styles.titleIcon}>📊</span>

@@ -62,6 +62,27 @@
   gap: 20px;
 }
 
+/* Loan Parameters Grid */
+.loanParamsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.loanParamCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.loanParamTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
 /* Summary Grid */
 .summaryGrid {
   display: grid;
@@ -77,6 +98,24 @@
 }
 
 /* Comparison Section */
+.comparisonExplanation {
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.comparisonExplanation p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.comparisonExplanation strong {
+  color: var(--text-primary);
+}
+
 .comparisonTable {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);

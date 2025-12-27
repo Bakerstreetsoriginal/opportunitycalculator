@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { InputField } from './InputField';
 import { ResultCard, ScenarioCard } from './ResultCard';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 import {
   calculateOpportuniteitskost,
   formatCurrency,
@@ -9,13 +10,16 @@ import {
 } from '../utils/calculations';
 import styles from './Calculator.module.css';
 
+const DEFAULT_INPUTS: LoanInputs = {
+  kredietbedrag: 250000,
+  intrest: 0.03,
+  looptijd: 10,
+  instapkosten: 0.01,
+  bulletIntrest: 0.034, // Typically 0.2-0.5% higher than regular
+};
+
 export function OpportuniteitskostCalculator() {
-  const [inputs, setInputs] = useState<LoanInputs>({
-    kredietbedrag: 250000,
-    intrest: 0.03,
-    looptijd: 10,
-    instapkosten: 0.01,
-  });
+  const [inputs, setInputs] = useLocalStorage<LoanInputs>('opportuniteitskost-inputs', DEFAULT_INPUTS);
 
   const results = useMemo(() => calculateOpportuniteitskost(inputs), [inputs]);
 
@@ -33,10 +37,11 @@ export function OpportuniteitskostCalculator() {
         </p>
       </div>
 
+      {/* Shared Parameters */}
       <section className={styles.inputSection}>
         <h2 className={styles.sectionTitle}>
           <span className={styles.sectionIcon}>⚙️</span>
-          Parameters
+          Gemeenschappelijke Parameters
         </h2>
         <div className={styles.inputGrid}>
           <InputField
@@ -47,15 +52,6 @@ export function OpportuniteitskostCalculator() {
             min={10000}
             max={2000000}
             hint="Het bedrag dat je wil lenen"
-          />
-          <InputField
-            label="Jaarlijkse rente"
-            value={inputs.intrest}
-            onChange={(v) => updateInput('intrest', v)}
-            type="percentage"
-            min={0.005}
-            max={0.15}
-            hint="De jaarlijkse kredietrente"
           />
           <InputField
             label="Looptijd"
@@ -75,6 +71,40 @@ export function OpportuniteitskostCalculator() {
             max={0.05}
             hint="Kosten bij aankoop belegging"
           />
+        </div>
+      </section>
+
+      {/* Loan-specific Parameters */}
+      <section className={styles.inputSection}>
+        <h2 className={styles.sectionTitle}>
+          <span className={styles.sectionIcon}>📋</span>
+          Krediet Parameters
+        </h2>
+        <div className={styles.loanParamsGrid}>
+          <div className={styles.loanParamCard}>
+            <h3 className={styles.loanParamTitle}>📊 Klassiek Krediet</h3>
+            <InputField
+              label="Jaarlijkse rente"
+              value={inputs.intrest}
+              onChange={(v) => updateInput('intrest', v)}
+              type="percentage"
+              min={0.005}
+              max={0.15}
+              hint="Typisch 2.5% - 4%"
+            />
+          </div>
+          <div className={styles.loanParamCard}>
+            <h3 className={styles.loanParamTitle}>🎯 Bulletkrediet</h3>
+            <InputField
+              label="Jaarlijkse rente"
+              value={inputs.bulletIntrest}
+              onChange={(v) => updateInput('bulletIntrest', v)}
+              type="percentage"
+              min={0.005}
+              max={0.15}
+              hint="Typisch 0.2% - 0.5% hoger"
+            />
+          </div>
         </div>
       </section>
 
@@ -117,7 +147,7 @@ export function OpportuniteitskostCalculator() {
               eindkapitaal={formatCurrency(scenario.eindkapitaal)}
               rendement={formatCurrency(scenario.rendement)}
               netto={formatCurrency(scenario.netto)}
-              isPositive={scenario.netto > 0}
+              scenarioType={scenario.type}
             />
           ))}
         </div>
@@ -171,7 +201,7 @@ export function OpportuniteitskostCalculator() {
               eindkapitaal={formatCurrency(scenario.eindkapitaal)}
               rendement={formatCurrency(scenario.rendement)}
               netto={formatCurrency(scenario.netto)}
-              isPositive={scenario.netto > 0}
+              scenarioType={scenario.type}
             />
           ))}
         </div>
@@ -181,14 +211,21 @@ export function OpportuniteitskostCalculator() {
       <section className={styles.comparisonSection}>
         <h2 className={styles.sectionTitle}>
           <span className={styles.sectionIcon}>⚖️</span>
-          Vergelijking
+          Vergelijking: Klassiek vs. Bullet
         </h2>
+        <div className={styles.comparisonExplanation}>
+          <p>
+            <strong>Wat betekent het verschil?</strong> Het verschil toont hoeveel meer (of minder) 
+            je overhoudt bij een bulletkrediet ten opzichte van een klassiek krediet, na aftrek van 
+            alle rentekosten. Een positief verschil betekent dat het bulletkrediet voordeliger is.
+          </p>
+        </div>
         <div className={styles.comparisonTable}>
           <div className={styles.comparisonHeader}>
-            <span>Scenario</span>
-            <span>Klassiek Krediet</span>
-            <span>Bulletkrediet</span>
-            <span>Verschil</span>
+            <span>Rendement</span>
+            <span>Klassiek Netto</span>
+            <span>Bullet Netto</span>
+            <span>Voordeel Bullet</span>
           </div>
           {results.regularLoan.scenarios.map((regularScenario, i) => {
             const bulletScenario = results.bulletLoan.scenarios[i];
@@ -213,4 +250,3 @@ export function OpportuniteitskostCalculator() {
     </div>
   );
 }
-

@@ -28,27 +28,74 @@ export function InputField({
 }: InputFieldProps) {
   const id = useId();
   
-  const getStepAndDisplay = () => {
+  const getConfig = () => {
     switch (type) {
       case 'currency':
-        return { step: 1000, prefix: '€', displayValue: value };
+        return { 
+          step: 1000, 
+          prefix: '€', 
+          displayValue: value,
+          inputMin: min,
+          inputMax: max,
+        };
       case 'percentage':
-        return { step: 0.1, suffix: '%', displayValue: value * 100 };
+        // Display as percentage (e.g., 3.5 for 3.5%)
+        // Store as decimal (e.g., 0.035)
+        return { 
+          step: 0.1, 
+          suffix: '%', 
+          displayValue: Math.round(value * 10000) / 100, // Convert to display percentage
+          inputMin: min !== undefined ? min * 100 : undefined,
+          inputMax: max !== undefined ? max * 100 : undefined,
+        };
       case 'years':
-        return { step: 1, suffix: 'jaar', displayValue: value };
+        return { 
+          step: 1, 
+          suffix: 'jaar', 
+          displayValue: value,
+          inputMin: min,
+          inputMax: max,
+        };
       default:
-        return { step, suffix, prefix, displayValue: value };
+        return { 
+          step, 
+          suffix, 
+          prefix, 
+          displayValue: value,
+          inputMin: min,
+          inputMax: max,
+        };
     }
   };
   
-  const config = getStepAndDisplay();
+  const config = getConfig();
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = parseFloat(e.target.value) || 0;
+    const rawValue = e.target.value;
+    
+    // Allow empty input
+    if (rawValue === '' || rawValue === '-') {
+      return;
+    }
+    
+    const numValue = parseFloat(rawValue);
+    if (isNaN(numValue)) return;
+    
     if (type === 'percentage') {
-      onChange(rawValue / 100);
+      // Convert from display percentage to decimal
+      onChange(numValue / 100);
     } else {
-      onChange(rawValue);
+      onChange(numValue);
+    }
+  };
+  
+  const handleBlur = () => {
+    // Ensure value is within bounds on blur
+    let finalValue = value;
+    if (min !== undefined && value < min) finalValue = min;
+    if (max !== undefined && value > max) finalValue = max;
+    if (finalValue !== value) {
+      onChange(finalValue);
     }
   };
   
@@ -64,8 +111,9 @@ export function InputField({
           type="number"
           value={config.displayValue}
           onChange={handleChange}
-          min={type === 'percentage' ? (min ?? 0) * 100 : min}
-          max={type === 'percentage' ? (max ?? 100) * 100 : max}
+          onBlur={handleBlur}
+          min={config.inputMin}
+          max={config.inputMax}
           step={config.step}
           className={styles.input}
         />
@@ -75,4 +123,3 @@ export function InputField({
     </div>
   );
 }
-

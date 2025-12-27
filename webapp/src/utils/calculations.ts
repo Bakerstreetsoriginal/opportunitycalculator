@@ -12,6 +12,8 @@ export interface LoanInputs {
   intrest: number; // Annual interest rate (decimal, e.g., 0.03 for 3%)
   looptijd: number; // Loan term in years
   instapkosten: number; // Entry costs (decimal, e.g., 0.01 for 1%)
+  // Bullet loan specific
+  bulletIntrest: number; // Bullet loan interest rate (typically higher)
 }
 
 export interface ScenarioResult {
@@ -20,6 +22,7 @@ export interface ScenarioResult {
   netto: number; // Net result (return - interest costs)
   label: string;
   returnRate: number;
+  type: 'pessimistic' | 'neutral' | 'optimistic';
 }
 
 export interface RegularLoanResult {
@@ -43,10 +46,10 @@ export interface OpportuniteitskostResult {
   bulletLoan: BulletLoanResult;
 }
 
-const SCENARIO_RATES = [
-  { rate: 0.02, label: 'Pessimistisch (2%)' },
-  { rate: 0.05, label: 'Neutraal (5%)' },
-  { rate: 0.07, label: 'Optimistisch (7%)' },
+const SCENARIO_RATES: Array<{ rate: number; label: string; type: 'pessimistic' | 'neutral' | 'optimistic' }> = [
+  { rate: 0.02, label: 'Pessimistisch (2%)', type: 'pessimistic' },
+  { rate: 0.05, label: 'Neutraal (5%)', type: 'neutral' },
+  { rate: 0.07, label: 'Optimistisch (7%)', type: 'optimistic' },
 ];
 
 /**
@@ -103,13 +106,13 @@ export function calculateFutureValueOfContributions(
  * Calculate full Opportuniteitskost comparison
  */
 export function calculateOpportuniteitskost(inputs: LoanInputs): OpportuniteitskostResult {
-  const { kredietbedrag, intrest, looptijd, instapkosten } = inputs;
+  const { kredietbedrag, intrest, looptijd, instapkosten, bulletIntrest } = inputs;
   
   // === REGULAR LOAN ===
   const regularMonthly = calculateMonthlyPayment(kredietbedrag, intrest, looptijd);
   const regularTotalInterest = (12 * looptijd * regularMonthly) - kredietbedrag;
   
-  const regularScenarios: ScenarioResult[] = SCENARIO_RATES.map(({ rate, label }) => {
+  const regularScenarios: ScenarioResult[] = SCENARIO_RATES.map(({ rate, label, type }) => {
     // Invest the loan amount (minus entry costs) and let it grow
     const eindkapitaal = calculateCompoundGrowth(
       kredietbedrag * (1 - instapkosten),
@@ -119,14 +122,11 @@ export function calculateOpportuniteitskost(inputs: LoanInputs): Opportuniteitsk
     const rendement = eindkapitaal - kredietbedrag;
     const netto = rendement - regularTotalInterest;
     
-    return { eindkapitaal, rendement, netto, label, returnRate: rate };
+    return { eindkapitaal, rendement, netto, label, returnRate: rate, type };
   });
   
   // === BULLET LOAN ===
-  // For bullet loan, we use the same entry costs percentage but with potentially different rate
-  // In the Excel, bullet loan has its own interest rate input (B28), but for simplicity
-  // we'll use a slightly higher rate (typical for bullet loans)
-  const bulletIntrest = intrest + 0.002; // Bullet loans typically ~0.2% higher
+  // Use the separate bullet loan interest rate from inputs
   const bulletMonthly = (kredietbedrag * bulletIntrest) / 12; // Interest only
   const bulletTotalInterest = bulletMonthly * 12 * looptijd;
   
@@ -134,7 +134,7 @@ export function calculateOpportuniteitskost(inputs: LoanInputs): Opportuniteitsk
   const monthlyDifference = regularMonthly - bulletMonthly;
   const totalExtraCapital = monthlyDifference * (looptijd * 12);
   
-  const bulletScenarios: ScenarioResult[] = SCENARIO_RATES.map(({ rate, label }) => {
+  const bulletScenarios: ScenarioResult[] = SCENARIO_RATES.map(({ rate, label, type }) => {
     // Two components:
     // 1. Compound growth of the initial capital
     // 2. Future value of the monthly savings invested
@@ -154,7 +154,7 @@ export function calculateOpportuniteitskost(inputs: LoanInputs): Opportuniteitsk
     const rendement = eindkapitaal - startkapitaalPlusVerschil;
     const netto = rendement - bulletTotalInterest;
     
-    return { eindkapitaal, rendement, netto, label, returnRate: rate };
+    return { eindkapitaal, rendement, netto, label, returnRate: rate, type };
   });
   
   return {
@@ -278,4 +278,3 @@ export function formatCompact(value: number): string {
   }
   return formatCurrency(value);
 }
-

@@ -4,7 +4,7 @@ interface ResultCardProps {
   label: string;
   value: string;
   subValue?: string;
-  variant?: 'default' | 'positive' | 'negative' | 'highlight';
+  variant?: 'default' | 'positive' | 'negative' | 'neutral' | 'highlight';
   size?: 'normal' | 'large';
   icon?: string;
 }
@@ -34,7 +34,7 @@ interface ScenarioCardProps {
   eindkapitaal: string;
   rendement: string;
   netto: string;
-  isPositive: boolean;
+  scenarioType: 'pessimistic' | 'neutral' | 'optimistic';
   rate: string;
 }
 
@@ -43,11 +43,32 @@ export function ScenarioCard({
   eindkapitaal,
   rendement,
   netto,
-  isPositive,
+  scenarioType,
   rate,
 }: ScenarioCardProps) {
+  const getScenarioClass = () => {
+    switch (scenarioType) {
+      case 'pessimistic':
+        return styles.pessimistic;
+      case 'neutral':
+        return styles.neutralScenario;
+      case 'optimistic':
+        return styles.optimistic;
+      default:
+        return '';
+    }
+  };
+
+  const getNettoClass = () => {
+    // Parse the netto value to determine if positive or negative
+    const numericNetto = parseFloat(netto.replace(/[^0-9,-]/g, '').replace(',', '.'));
+    if (numericNetto > 0) return styles.positiveText;
+    if (numericNetto < 0) return styles.negativeText;
+    return '';
+  };
+
   return (
-    <div className={`${styles.scenarioCard} ${isPositive ? styles.positive : styles.negative}`}>
+    <div className={`${styles.scenarioCard} ${getScenarioClass()}`}>
       <div className={styles.scenarioHeader}>
         <span className={styles.scenarioLabel}>{label}</span>
         <span className={styles.scenarioRate}>{rate}</span>
@@ -63,7 +84,7 @@ export function ScenarioCard({
         </div>
         <div className={`${styles.scenarioItem} ${styles.nettoItem}`}>
           <span className={styles.scenarioItemLabel}>Netto resultaat</span>
-          <span className={`${styles.scenarioItemValue} ${styles.nettoValue} ${isPositive ? styles.positiveText : styles.negativeText}`}>
+          <span className={`${styles.scenarioItemValue} ${styles.nettoValue} ${getNettoClass()}`}>
             {netto}
           </span>
         </div>
@@ -71,4 +92,3 @@ export function ScenarioCard({
     </div>
   );
 }
-

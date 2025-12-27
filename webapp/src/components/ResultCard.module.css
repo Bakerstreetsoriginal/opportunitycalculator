@@ -56,11 +56,19 @@
 }
 
 .negative {
-  border-color: rgba(244, 63, 94, 0.2);
+  border-color: rgba(225, 29, 72, 0.2);
 }
 
 .negative .value {
   color: var(--accent-rose);
+}
+
+.neutral {
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.neutral .value {
+  color: var(--accent-amber);
 }
 
 .highlight {
@@ -86,12 +94,17 @@
   transform: translateY(-2px);
 }
 
-.scenarioCard.positive {
-  border-left: 3px solid var(--accent-emerald);
+/* Scenario type colors */
+.scenarioCard.pessimistic {
+  border-left: 3px solid var(--accent-rose);
 }
 
-.scenarioCard.negative {
-  border-left: 3px solid var(--accent-rose);
+.scenarioCard.neutralScenario {
+  border-left: 3px solid var(--accent-amber);
+}
+
+.scenarioCard.optimistic {
+  border-left: 3px solid var(--accent-emerald);
 }
 
 .scenarioHeader {
@@ -158,3 +171,6 @@
   color: var(--accent-rose) !important;
 }
 
+.neutralText {
+  color: var(--accent-amber) !important;
+}

@@ -14,7 +14,7 @@
 .inputWrapper {
   display: flex;
   align-items: center;
-  background: var(--bg-tertiary);
+  background: var(--input-bg, var(--bg-tertiary));
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 0 16px;
@@ -79,4 +79,3 @@
   color: var(--text-tertiary);
   margin-top: -2px;
 }
-

@@ -1,0 +1,160 @@
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  background: var(--bg-card-hover);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.icon {
+  font-size: 1.25rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  letter-spacing: -0.02em;
+}
+
+.subValue {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+
+/* Size variants */
+.large .value {
+  font-size: 2rem;
+}
+
+/* Color variants */
+.positive {
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.positive .value {
+  color: var(--accent-emerald);
+}
+
+.negative {
+  border-color: rgba(244, 63, 94, 0.2);
+}
+
+.negative .value {
+  color: var(--accent-rose);
+}
+
+.highlight {
+  background: linear-gradient(135deg, var(--accent-gold-dim), transparent);
+  border-color: rgba(212, 168, 83, 0.3);
+}
+
+.highlight .value {
+  color: var(--accent-gold);
+}
+
+/* Scenario Card */
+.scenarioCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.scenarioCard:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+
+.scenarioCard.positive {
+  border-left: 3px solid var(--accent-emerald);
+}
+
+.scenarioCard.negative {
+  border-left: 3px solid var(--accent-rose);
+}
+
+.scenarioHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.scenarioLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.scenarioRate {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
+.scenarioGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.scenarioItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scenarioItemLabel {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+.scenarioItemValue {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.nettoItem {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.nettoValue {
+  font-size: 1.1rem;
+}
+
+.positiveText {
+  color: var(--accent-emerald) !important;
+}
+
+.negativeText {
+  color: var(--accent-rose) !important;
+}
+

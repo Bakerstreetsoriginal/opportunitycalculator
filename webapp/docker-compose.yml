@@ -1,0 +1,28 @@
+services:
+  firecalculator:
+    build: .
+    container_name: firecalculator
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.enable=true"
+      # HTTP router
+      - "traefik.http.routers.firecalculator.rule=Host(`firecalculator.dizzyman.nl`)"
+      - "traefik.http.routers.firecalculator.entrypoints=web"
+      - "traefik.http.routers.firecalculator.middlewares=redirect-to-https"
+      # HTTPS router
+      - "traefik.http.routers.firecalculator-secure.rule=Host(`firecalculator.dizzyman.nl`)"
+      - "traefik.http.routers.firecalculator-secure.entrypoints=websecure"
+      - "traefik.http.routers.firecalculator-secure.tls=true"
+      - "traefik.http.routers.firecalculator-secure.tls.certresolver=le"
+      # Service
+      - "traefik.http.services.firecalculator.loadbalancer.server.port=80"
+      # Redirect middleware
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+
+networks:
+  traefik-net:
+    external: true
+
